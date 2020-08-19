@@ -513,6 +513,8 @@ namespace Garland.Data.Output
                 _update.IncludeDocument((string)spot.id, "fishing", lang, 2, Wrapper(wrapper));
             });
 
+            /* No need to make fish.js
+
             // Garland Bell and FFXIVFisher data.
 
             var parts = new List<string>();
@@ -529,6 +531,8 @@ namespace Garland.Data.Output
 
             parts.Add("");
             FileDatabase.WriteFile("Garland.Web\\bell\\fish.js", string.Join(";\r\n\r\n", parts));
+
+            */
         }
 
         void WriteNodes(string lang)
@@ -540,10 +544,14 @@ namespace Garland.Data.Output
                 _update.IncludeDocument((string)node.id, "node", lang, 2, Wrapper(wrapper));
             });
 
+            /* No need to make nodes.js
+              
             // Garland Bell node data.
 
             var contents = "gt.bell.nodes = " + Json(_db.NodeViews, Formatting.Indented) + ";\r\n";
             FileDatabase.WriteFile("Garland.Web\\bell\\nodes.js", contents);
+
+            */
         }
 
         void WriteStatuses(string lang)
