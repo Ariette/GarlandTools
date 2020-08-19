@@ -70,9 +70,15 @@ namespace Garland.Data
                 return "Exploration Achievement Rewards";
             else if (si.Label == "FREE_SHOP_GRANDCOMPANY" && si.Argument == 1769906)
                 return "Grand Company Achievement Rewards";
+            else if (si.Label == "SPSHOP_HANDLER_ID" && si.Argument == 1770041)
+                return "Ishgardian Restoration";
+            else if (si.Label == "SPSHOP_HANDLER_ID" && si.Argument == 1770042)
+                return "Ishgardian Restoration Ranking";
             else
             {
                 DatabaseBuilder.PrintLine($"Unknown shop label {si.Label}, arg {si.Argument}.");
+                if (System.Diagnostics.Debugger.IsAttached)
+                    System.Diagnostics.Debugger.Break();
                 return si.Label;
             }
         }

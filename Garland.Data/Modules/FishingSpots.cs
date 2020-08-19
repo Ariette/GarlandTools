@@ -20,12 +20,23 @@ namespace Garland.Data.Modules
         Dictionary<string, Tuple<int, int, int>> _hackFishingSpotLocations = new Dictionary<string, Tuple<int, int, int>>()
         {
             // Diadem fishing spots have no set coordinates.
-            ["Diadem Grotto"] = Tuple.Create(1647, 14, 34), // 158
-            ["Southern Diadem Lake"] = Tuple.Create(1647, 8, 30), // 149
-            ["Northern Diadem Lake"] = Tuple.Create(1647, 10, 9), // 151
-            ["Blustery Cloudtop"] = Tuple.Create(1647, 31, 11), // 152
-            ["Calm Cloudtop"] = Tuple.Create(1647, 28, 33), // 153
-            ["Swirling Cloudtop"] = Tuple.Create(1647, 13, 24), // 154
+            ["Diadem Grotto"] = Tuple.Create(1647, 12, 38), // 158
+            ["Southern Diadem Lake"] = Tuple.Create(1647, 12, 32), // 149
+            ["Northern Diadem Lake"] = Tuple.Create(1647, 11, 10), // 151
+            ["Blustery Cloudtop"] = Tuple.Create(1647, 34, 10), // 152
+            ["Calm Cloudtop"] = Tuple.Create(1647, 31, 35), // 153
+            ["Swirling Cloudtop"] = Tuple.Create(1647, 13, 26), // 154
+            ["Outer Galadion Bay"] = Tuple.Create(3444, 5, 5), // 237
+            ["Galadion Spectral Current"] = Tuple.Create(3444, 5, 5), // 238
+            ["The Southern Strait of Merlthor"] = Tuple.Create(3445, 5, 5), // 239
+            ["Southern Merlthor Spectral Current"] = Tuple.Create(3445, 5, 5), // 240
+            ["Open Rhotano Sea"] = Tuple.Create(3447, 5, 5), // 241
+            ["Rhotano Spectral Current"] = Tuple.Create(3447, 5, 5), // 242
+            ["The Northern Strait of Merlthor"] = Tuple.Create(3446, 5, 5), // 242
+            ["Northern Merlthor Spectral Current"] = Tuple.Create(3446, 5, 5), // 243
+            ["Swirling Cloudtop"] = Tuple.Create(1647, 13, 24), // 244
+            ["Windswept Cloudtop"] = Tuple.Create(1647, 28, 14), // 10007
+            ["The Doman Enclave"] = Tuple.Create(2813, 7, 5) // 10000
         };
 
         HashSet<int> _hackExcludedFishingSpots = new HashSet<int>() {
