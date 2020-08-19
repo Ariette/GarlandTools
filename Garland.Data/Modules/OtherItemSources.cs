@@ -19,8 +19,10 @@ namespace Garland.Data.Modules
         {
             _venturesByName = _builder.Db.Ventures.Where(v => v.name != null).ToDictionary(v => (string)v.name);
 
-            var lines = Utils.Tsv(Path.Combine(Config.SupplementalPath, "FFXIV Data - Items.tsv"));
-            foreach (var line in lines.Skip(1))
+            var Items = Utils.Tsv(Path.Combine(Config.SupplementalPath, "FFXIV Data - Items.tsv")).Skip(1);
+            var lodestones = Utils.Tsv(Path.Combine(Config.SupplementalPath, "lodestones.tsv")).Skip(1);
+            var lines = Items.Concat(lodestones);
+            foreach (var line in lines)
             {
                 var type = line[1];
                 var args = line.Skip(2).Where(c => c != "").ToArray();
@@ -28,7 +30,7 @@ namespace Garland.Data.Modules
 
                 try
                 {
-                    var item = _builder.Db.ItemsByName[itemName];
+                    var item = _builder.Db.ItemsByName.ContainsKey(itemName) ? _builder.Db.ItemsByName[itemName] : _builder.Db.ItemsByName[itemName + " "]; // Some item names in database are not trimmed...
 
                     switch (type)
                     {
@@ -92,8 +94,8 @@ namespace Garland.Data.Modules
                 {
                     var joinedArgs = string.Join(", ", args);
                     DatabaseBuilder.PrintLine($"Error importing supplemental source '{itemName}' with args '{joinedArgs}': {ex.Message}");
-                    if (System.Diagnostics.Debugger.IsAttached)
-                        System.Diagnostics.Debugger.Break();
+//                    if (System.Diagnostics.Debugger.IsAttached)
+//                        System.Diagnostics.Debugger.Break();
                 }
             }
         }
@@ -141,14 +143,21 @@ namespace Garland.Data.Modules
 
             foreach (string mobName in sources)
             {
-                var mob = _builder.Db.Mobs.Find(Mob => String.Equals(Mob.name, mobName, StringComparison.CurrentCultureIgnoreCase));
-                item.drops.Add((int)mob.id);
-                _builder.Db.AddReference(item, "mob", (int)mob.id, false);
+                try
+                {
+                    var mob = _builder.Db.Mobs.First(n => String.Equals(n.en.name.ToString(), mobName, StringComparison.CurrentCultureIgnoreCase));
+                    item.drops.Add((long)mob.id);
+                    _builder.Db.AddReference(item, "mob", (string)mob.id, false);
 
-                if (mob.drops == null)
-                    mob.drops = new JArray();
-                mob.drops.Add((int)item.id);
-                _builder.Db.AddReference(mob, "item", (int)item.id, false);
+                    if (mob.drops == null)
+                        mob.drops = new JArray();
+                    mob.drops.Add((int)item.id);
+                    _builder.Db.AddReference(mob, "item", (int)item.id, false);
+                } 
+                catch (Exception e)
+                {
+                    Console.WriteLine("Source : " + item.name + ", Type : mob, Target : " + mobName + e.Message);
+                }
             }
         }
 
@@ -160,12 +169,12 @@ namespace Garland.Data.Modules
             foreach (string itemName in sources)
             {
                 var acquireItem = _builder.Db.ItemsByName[itemName];
-                item.desynthedFrom.Add((int)acquireItem.id);
+                item.acquiredFrom.Add((int)acquireItem.id);
                 _builder.Db.AddReference(item, "item", (int)acquireItem.id, false);
 
                 if (acquireItem.acquire == null)
                     acquireItem.acquire = new JArray();
-                acquireItem.desynthedTo.Add((int)item.id);
+                acquireItem.acquire.Add((int)item.id);
                 _builder.Db.AddReference(acquireItem, "item", (int)item.id, false);
             }
         }
@@ -237,17 +246,27 @@ namespace Garland.Data.Modules
 
         void BuildVentures(dynamic item, string[] sources)
         {
-            if (item.ventures != null)
-                throw new InvalidOperationException("item.ventures already exists.");
             var ventureIds = sources.Select(j => (int)_venturesByName[j].id);
-            item.ventures = new JArray(ventureIds);
+            if (item.ventures == null)
+            {
+                item.ventures = new JArray(ventureIds);
+            }
+            else
+            {
+                item.ventures.Merge(new JArray(ventureIds), new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
+            }
         }
 
         void BuildVoyages(dynamic item, string[] sources)
         {
-            if (item.voyages != null)
-                throw new InvalidOperationException("item.voyages already exists.");
-            item.voyages = new JArray(sources);
+            if (item.voyages == null)
+            {
+                item.voyages = new JArray(sources);
+            }
+            else
+            {
+                item.voyages.Merge(new JArray(sources), new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
+            }
         }
 
         void BuildNodes(dynamic item, string[] sources)
@@ -300,15 +319,22 @@ namespace Garland.Data.Modules
 
             foreach (var name in sources)
             {
-                var instance = _builder.Db.Instances.First(i => i.en.name == name);
-                int instanceId = instance.id;
-                if (instance.rewards == null)
-                    instance.rewards = new JArray();
-                instance.rewards.Add(itemId);
-                item.instances.Add(instanceId);
+                try
+                {
+                    var instance = _builder.Db.Instances.First(i => i.en.name == name);
+                    int instanceId = instance.id;
+                    if (instance.rewards == null)
+                        instance.rewards = new JArray();
+                    instance.rewards.Add(itemId);
+                    item.instances.Add(instanceId);
 
-                _builder.Db.AddReference(instance, "item", itemId, false);
-                _builder.Db.AddReference(item, "instance", instanceId, true);
+                    _builder.Db.AddReference(instance, "item", itemId, false);
+                    _builder.Db.AddReference(item, "instance", instanceId, true);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Source : " + item.name + ", Type : instance, Target : " + name + e.Message);
+                }
             }
         }
     }
