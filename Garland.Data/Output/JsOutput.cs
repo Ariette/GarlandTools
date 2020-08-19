@@ -20,7 +20,7 @@ namespace Garland.Data.Output
         Dictionary<Tuple<string, string>, Dictionary<string, JObject>> _partialsByLangTypeById = new Dictionary<Tuple<string, string>, Dictionary<string, JObject>>();
         Dictionary<dynamic, dynamic> _ingredientsByItem = new Dictionary<dynamic, dynamic>();
         readonly static JsonConverter[] _converters = new[] { new WrapperConverter() };
-        readonly static string[] _languagesCodes = new[] { "en", "ja", "de", "fr" };
+        readonly static string[] _languagesCodes = new[] { "en" };
 
         public JsOutput(UpdatePackage update)
         {
@@ -638,9 +638,6 @@ namespace Garland.Data.Output
 
             ingredient.id = item.id;
             ingredient.en = new JObject(new JProperty("name", item.en.name));
-            ingredient.ja = new JObject(new JProperty("name", item.ja.name));
-            ingredient.de = new JObject(new JProperty("name", item.de.name));
-            ingredient.fr = new JObject(new JProperty("name", item.fr.name));
             ingredient.icon = item.icon;
             ingredient.category = item.category;
             ingredient.ilvl = item.ilvl;
