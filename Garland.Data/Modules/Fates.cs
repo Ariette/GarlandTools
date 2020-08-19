@@ -120,6 +120,8 @@ namespace Garland.Data.Modules
                 case 60505: return "Escort";
                 case 60506: return "Path";
                 case 60958: return "EurekaNM";
+                case 60994: return "Ishgard Restoration";
+                case 60508: return "Event";
 
                 default:
                     DatabaseBuilder.PrintLine($"Unknown fate type: {key}, {name}, {mapIconId}");

@@ -26,7 +26,7 @@ namespace Garland.Data.Modules
             {
                 var name = sWeather.Name.ToString();
                 var iconPath = Path.Combine(baseIconPath, name + ".png");
-                if (!string.IsNullOrEmpty(name) && !File.Exists(iconPath))
+                if (!string.IsNullOrEmpty(name) && !File.Exists(iconPath) && sWeather.Icon != null) // exclude weathers without icon.
                 {
                     var image = sWeather.Icon.GetImage();
                     image.Save(iconPath, System.Drawing.Imaging.ImageFormat.Png);

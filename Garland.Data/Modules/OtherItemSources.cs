@@ -36,6 +36,14 @@ namespace Garland.Data.Modules
                             BuildDesynth(item, args);
                             break;
 
+                        case "Drop":
+                            BuildDrop(item, args);
+                            break;
+
+                        case "Acquire":
+                            BuildAcquire(item, args);
+                            break;
+
                         case "Reduce":
                             BuildReduce(item, args);
                             break;
@@ -123,6 +131,42 @@ namespace Garland.Data.Modules
                     desynthItem.desynthedTo = new JArray();
                 desynthItem.desynthedTo.Add((int)item.id);
                 _builder.Db.AddReference(desynthItem, "item", (int)item.id, false);
+            }
+        }
+
+        void BuildDrop(dynamic item, string[] sources)
+        {
+            if (item.drops == null)
+                item.drops = new JArray();
+
+            foreach (string mobName in sources)
+            {
+                var mob = _builder.Db.Mobs.Find(Mob => String.Equals(Mob.name, mobName, StringComparison.CurrentCultureIgnoreCase));
+                item.drops.Add((int)mob.id);
+                _builder.Db.AddReference(item, "mob", (int)mob.id, false);
+
+                if (mob.drops == null)
+                    mob.drops = new JArray();
+                mob.drops.Add((int)item.id);
+                _builder.Db.AddReference(mob, "item", (int)item.id, false);
+            }
+        }
+
+        void BuildAcquire(dynamic item, string[] sources)
+        {
+            if (item.acquiredFrom == null)
+                item.acquiredFrom = new JArray();
+
+            foreach (string itemName in sources)
+            {
+                var acquireItem = _builder.Db.ItemsByName[itemName];
+                item.desynthedFrom.Add((int)acquireItem.id);
+                _builder.Db.AddReference(item, "item", (int)acquireItem.id, false);
+
+                if (acquireItem.acquire == null)
+                    acquireItem.acquire = new JArray();
+                acquireItem.desynthedTo.Add((int)item.id);
+                _builder.Db.AddReference(acquireItem, "item", (int)item.id, false);
             }
         }
 
