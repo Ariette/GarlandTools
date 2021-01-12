@@ -15,6 +15,37 @@ namespace Garland.Data.Modules
 
         public override string Name => "Supply Duties";
 
+        private static int[] CURRENCIES = new int[] {
+            10309,
+            17833,
+            10311,
+            17834,
+            10307,
+            25199,
+            25200,
+            21072,
+            21073,
+            21074,
+            21075,
+            21076,
+            21077,
+            21078,
+            21079,
+            21080,
+            21081,
+            21172,
+            21173,
+            21935,
+            22525,
+            26533,
+            26807,
+            28063,
+            28186,
+            28187,
+            28188,
+            30341
+        };
+
         public SupplyDuties(ItemSourceComplexity complexity)
         {
             _complexity = complexity;
@@ -25,6 +56,7 @@ namespace Garland.Data.Modules
             BuildMasterpieceSupplyDuties();
             BuildSatisfactionSupplyDuties();
             BuildGCSupplyAndProvisioningDuties();
+            BuildCollectablesShopItemReward();
         }
 
         void BuildMasterpieceSupplyDuties()
@@ -40,8 +72,9 @@ namespace Garland.Data.Modules
                 if (sMasterpieceSupplyDuty.ClassJob.Key == 0)
                     continue;
 
-                var sRewardCurrency = (Saint.XivRow)sMasterpieceSupplyDuty["Reward{Currency}"];
-                var sRewardItem = (Saint.Item)sRewardCurrency["Item"];
+                var sRewardCurrency = (ushort)sMasterpieceSupplyDuty["Reward{Currency}"];
+                var sRewardItemKey = CURRENCIES[sRewardCurrency - 1];
+                var sRewardItem = _builder.Sheet<Saint.Item>()[sRewardItemKey];
 
                 foreach (var sCollectableItem in sMasterpieceSupplyDuty.CollectableItems)
                 {
@@ -59,9 +92,9 @@ namespace Garland.Data.Modules
                     item.masterpiece.stars = sCollectableItem.Stars;
                     item.masterpiece.lvl = new JArray(sMasterpieceSupplyDuty.ClassJobLevel, sCollectableItem.MaxClassJobLevel);
                     item.masterpiece.xp = new JArray(sCollectableItem.CalculateExp(sCollectableItem.MaxClassJobLevel));
-                    item.masterpiece.reward = sRewardItem.Key;
+                    item.masterpiece.reward = sRewardItemKey;
 
-                    _builder.Db.AddReference(item, "item", sRewardItem.Key, false);
+                    _builder.Db.AddReference(item, "item", sRewardItemKey, false);
 
                     if (sCollectableItem.ScripRewards == 0) {
                         item.masterpiece.rewardAmount = new JArray(0, 0, 0);
@@ -88,13 +121,21 @@ namespace Garland.Data.Modules
                     }
 
                     // Add supply data to reward.
-                    var rewardItem = _builder.Db.ItemsById[sRewardItem.Key];
+                    var rewardItem = _builder.Db.ItemsById[sRewardItemKey];
                     if (rewardItem.supplyReward == null)
                         rewardItem.supplyReward = new JArray();
                     rewardItem.supplyReward.Add(BuildSupplyReward(sMasterpieceSupplyDuty, item));
 
                     _builder.Db.AddReference(rewardItem, "item", requiredItemKey, false);
                 }
+            }
+        }
+
+        void BuildCollectablesShopItemReward()
+        {
+            foreach(var sCollectableShopItem in _builder.Sheet2("CollectablesShopItem"))
+            {
+                Console.WriteLine(sCollectableShopItem["Item"]);
             }
         }
 
@@ -156,11 +197,12 @@ namespace Garland.Data.Modules
                         supply.items = new JArray();
                         for (var i = 0; i < 2; i++)
                         {
-                            var rewardCurrency = (Saint.IXivRow)sSupplyReward["Reward{Currency}[" + i + "]"];
-                            if (rewardCurrency == null || rewardCurrency.Key == 0)
+                            var rewardCurrencyKey = (ushort)sSupplyReward["Reward{Currency}[" + i + "]"];
+                            if (rewardCurrencyKey == 0)
                                 continue;
 
-                            var rewardGameItem = (Saint.Item)rewardCurrency["Item"];
+                            var rewardCurrencyItemKey = CURRENCIES[rewardCurrencyKey - 1];
+                            var rewardGameItem = _builder.Sheet<Saint.Item>()[rewardCurrencyItemKey];
 
                             var rewardLow = (int)(UInt16)sSupplyReward["Quantity{Low}[" + i + "]"];
 
