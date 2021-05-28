@@ -270,6 +270,7 @@ namespace Garland.Data.Output
                 partial.l = node.lvl;
                 partial.t = node.type;
                 partial.z = node.zoneid;
+                partial.p = node.coords;
 
                 if (node.stars != null)
                     partial.s = node.stars;
