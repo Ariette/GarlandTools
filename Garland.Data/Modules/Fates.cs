@@ -122,6 +122,12 @@ namespace Garland.Data.Modules
                 case 60958: return "EurekaNM";
                 case 60994: return "Ishgard Restoration";
                 case 60508: return "Event";
+                case 63926: return "Craft";
+                // The Bozjan Southern Front FATEs
+                case 60801: return "Notorious Monster";
+                case 60802: return "Slay Enemies";
+                case 60803: return "Gather";
+                case 60804: return "Defense";
 
                 default:
                     DatabaseBuilder.PrintLine($"Unknown fate type: {key}, {name}, {mapIconId}");
