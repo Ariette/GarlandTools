@@ -113,8 +113,14 @@ namespace Garland.Data.Modules
         {
             foreach (string seedItemName in sources)
             {
-                var seedItem = _builder.Db.ItemsByName[seedItemName];
-                Items.AddGardeningPlant(_builder, seedItem, item);
+                try
+                {
+                    var seedItem = _builder.Db.ItemsByName[seedItemName];
+                    Items.AddGardeningPlant(_builder, seedItem, item);
+                } catch(Exception ex)
+                {
+                    DatabaseBuilder.PrintLine($"Error importing supplemental source Gardening '{seedItemName}' of '{item.name}' : {ex.Message}");
+                }
             }
         }
 
@@ -125,14 +131,21 @@ namespace Garland.Data.Modules
 
             foreach (string itemName in sources)
             {
-                var desynthItem = _builder.Db.ItemsByName[itemName];
-                item.desynthedFrom.Add((int)desynthItem.id);
-                _builder.Db.AddReference(item, "item", (int)desynthItem.id, false);
+                try
+                {
+                    var desynthItem = _builder.Db.ItemsByName[itemName];
+                    item.desynthedFrom.Add((int)desynthItem.id);
+                    _builder.Db.AddReference(item, "item", (int)desynthItem.id, false);
 
-                if (desynthItem.desynthedTo == null)
-                    desynthItem.desynthedTo = new JArray();
-                desynthItem.desynthedTo.Add((int)item.id);
-                _builder.Db.AddReference(desynthItem, "item", (int)item.id, false);
+                    if (desynthItem.desynthedTo == null)
+                        desynthItem.desynthedTo = new JArray();
+                    desynthItem.desynthedTo.Add((int)item.id);
+                    _builder.Db.AddReference(desynthItem, "item", (int)item.id, false);
+                }
+                catch(Exception ex)
+                {
+                    DatabaseBuilder.PrintLine($"Error importing supplemental source Desynth '{itemName}' of '{item.name}' : {ex.Message}");
+                }
             }
         }
 
@@ -154,9 +167,9 @@ namespace Garland.Data.Modules
                     mob.drops.Add((int)item.id);
                     _builder.Db.AddReference(mob, "item", (int)item.id, false);
                 } 
-                catch (Exception e)
+                catch (Exception ex)
                 {
-                    Console.WriteLine("Source : " + item.name + ", Type : mob, Target : " + mobName + e.Message);
+                    DatabaseBuilder.PrintLine($"Error importing supplemental source Mob '{mobName}' of '{item.name}' : {ex.Message}");
                 }
             }
         }
@@ -168,14 +181,21 @@ namespace Garland.Data.Modules
 
             foreach (string itemName in sources)
             {
-                var acquireItem = _builder.Db.ItemsByName[itemName];
-                item.acquiredFrom.Add((int)acquireItem.id);
-                _builder.Db.AddReference(item, "item", (int)acquireItem.id, false);
+                try
+                {
+                    var acquireItem = _builder.Db.ItemsByName[itemName];
+                    item.acquiredFrom.Add((int)acquireItem.id);
+                    _builder.Db.AddReference(item, "item", (int)acquireItem.id, false);
 
-                if (acquireItem.acquire == null)
-                    acquireItem.acquire = new JArray();
-                acquireItem.acquire.Add((int)item.id);
-                _builder.Db.AddReference(acquireItem, "item", (int)item.id, false);
+                    if (acquireItem.acquire == null)
+                        acquireItem.acquire = new JArray();
+                    acquireItem.acquire.Add((int)item.id);
+                    _builder.Db.AddReference(acquireItem, "item", (int)item.id, false);
+                }
+                catch(Exception ex)
+                {
+                    DatabaseBuilder.PrintLine($"Error importing supplemental source Acquire '{itemName}' of '{item.name}' : {ex.Message}");
+                }
             }
         }
 
@@ -186,41 +206,48 @@ namespace Garland.Data.Modules
 
             foreach (string sourceItemName in sources)
             {
-                var sourceItem = _builder.Db.ItemsByName[sourceItemName];
-                if (sourceItem.reducesTo == null)
-                    sourceItem.reducesTo = new JArray();
-                sourceItem.reducesTo.Add((int)item.id);
-                item.reducedFrom.Add((int)sourceItem.id);
-
-                _builder.Db.AddReference(sourceItem, "item", (int)item.id, false);
-                _builder.Db.AddReference(item, "item", (int)sourceItem.id, true);
-
-                // Set aetherial reduction info on the gathering node views.
-                // Bell views
-                foreach (var nodeView in _builder.Db.NodeViews)
+                try
                 {
-                    foreach (var slot in nodeView.items)
+                    var sourceItem = _builder.Db.ItemsByName[sourceItemName];
+                    if (sourceItem.reducesTo == null)
+                        sourceItem.reducesTo = new JArray();
+                    sourceItem.reducesTo.Add((int)item.id);
+                    item.reducedFrom.Add((int)sourceItem.id);
+
+                    _builder.Db.AddReference(sourceItem, "item", (int)item.id, false);
+                    _builder.Db.AddReference(item, "item", (int)sourceItem.id, true);
+
+                    // Set aetherial reduction info on the gathering node views.
+                    // Bell views
+                    foreach (var nodeView in _builder.Db.NodeViews)
                     {
-                        if (slot.id == sourceItem.id && slot.reduce == null)
+                        foreach (var slot in nodeView.items)
                         {
-                            slot.reduce = new JObject();
-                            slot.reduce.item = item.en.name;
-                            slot.reduce.icon = item.icon;
+                            if (slot.id == sourceItem.id && slot.reduce == null)
+                            {
+                                slot.reduce = new JObject();
+                                slot.reduce.item = item.en.name;
+                                slot.reduce.icon = item.icon;
+                            }
+                        }
+                    }
+
+                    // Database views
+                    foreach (var node in _builder.Db.Nodes)
+                    {
+                        foreach (var slot in node.items)
+                        {
+                            if (slot.id == sourceItem.id && slot.reduceId == null)
+                            {
+                                slot.reduceId = (int)item.id;
+                                _builder.Db.AddReference(node, "item", (int)item.id, false);
+                            }
                         }
                     }
                 }
-
-                // Database views
-                foreach (var node in _builder.Db.Nodes)
+                catch(Exception ex)
                 {
-                    foreach (var slot in node.items)
-                    {
-                        if (slot.id == sourceItem.id && slot.reduceId == null)
-                        {
-                            slot.reduceId = (int)item.id;
-                            _builder.Db.AddReference(node, "item", (int)item.id, false);
-                        }
-                    }
+                    DatabaseBuilder.PrintLine($"Error importing supplemental source Reduce '{sourceItemName}' of '{item.name}' : {ex.Message}");
                 }
             }
         }
@@ -331,9 +358,9 @@ namespace Garland.Data.Modules
                     _builder.Db.AddReference(instance, "item", itemId, false);
                     _builder.Db.AddReference(item, "instance", instanceId, true);
                 }
-                catch (Exception e)
+                catch (Exception ex)
                 {
-                    Console.WriteLine("Source : " + item.name + ", Type : instance, Target : " + name + e.Message);
+                    DatabaseBuilder.PrintLine($"Error importing supplemental source Reduce '{name}' of '{item.name}' : {ex.Message}");
                 }
             }
         }
