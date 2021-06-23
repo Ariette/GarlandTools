@@ -70,10 +70,9 @@ namespace Garland.Data
                 return "Exploration Achievement Rewards";
             else if (si.Label == "FREE_SHOP_GRANDCOMPANY" && si.Argument == 1769906)
                 return "Grand Company Achievement Rewards";
-            else if (si.Label == "SPSHOP_HANDLER_ID" && si.Argument == 1770041)
+            else if (si.Argument == 1770041 || si.Argument == 1770042 || si.Argument == 1770281 || si.Argument == 1770301 || si.Argument == 1770343)
+                // 1770041 & 1770042 : SPSHOP_HANDLER_ID, 1770281 : SPSHOP2_HANDLER_ID, 1770301: SPSHOP3_HANDLER_ID, 1770343: SPSHOP4_HANDLER_ID
                 return "Ishgardian Restoration";
-            else if (si.Label == "SPSHOP_HANDLER_ID" && si.Argument == 1770042)
-                return "Ishgardian Restoration Ranking";
             else
             {
                 DatabaseBuilder.PrintLine($"Unknown shop label {si.Label}, arg {si.Argument}.");
