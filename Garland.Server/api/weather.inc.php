@@ -111,6 +111,7 @@ $zoneWeather = array('Limsa Lominsa' => array(array('Rate' => 20, 'Weather' => 3
     'Eureka Hydatos' => array(array('Rate' => 12, 'Weather' => 2), array('Rate' => 34, 'Weather' => 8), array('Rate' => 56, 'Weather' => 17), array('Rate' => 78, 'Weather' => 10), array('Rate' => 100, 'Weather' => 15)),
     'The Royal Airship Landing' => array(array('Rate' => 100, 'Weather' => 84)),
     'Transparency' => array(array('Rate' => 100, 'Weather' => 84)),
+    'Sigmascape V4.0' => array(array('Rate' => 100, 'Weather' => 77)),
     'The Interdimensional Rift' => array(array('Rate' => 100, 'Weather' => 77)),
     'The House of the Fierce' => array(array('Rate' => 5, 'Weather' => 8), array('Rate' => 15, 'Weather' => 7), array('Rate' => 25, 'Weather' => 4), array('Rate' => 40, 'Weather' => 3), array('Rate' => 80, 'Weather' => 2), array('Rate' => 100, 'Weather' => 1)),
     'The Doman Enclave' => array(array('Rate' => 5, 'Weather' => 8), array('Rate' => 15, 'Weather' => 7), array('Rate' => 25, 'Weather' => 4), array('Rate' => 40, 'Weather' => 3), array('Rate' => 80, 'Weather' => 2), array('Rate' => 100, 'Weather' => 1)),
@@ -123,9 +124,11 @@ $zoneWeather = array('Limsa Lominsa' => array(array('Rate' => 20, 'Weather' => 3
     'Il Mheg' => array(array('Rate' => 10, 'Weather' => 7), array('Rate' => 20, 'Weather' => 4), array('Rate' => 35, 'Weather' => 3), array('Rate' => 45, 'Weather' => 10), array('Rate' => 60, 'Weather' => 1), array('Rate' => 100, 'Weather' => 2)),
     'The Rak\'tika Greatwood' => array(array('Rate' => 10, 'Weather' => 4), array('Rate' => 20, 'Weather' => 7), array('Rate' => 30, 'Weather' => 49), array('Rate' => 45, 'Weather' => 1), array('Rate' => 85, 'Weather' => 2), array('Rate' => 100, 'Weather' => 3)),
     'The Tempest' => array(array('Rate' => 20, 'Weather' => 3), array('Rate' => 80, 'Weather' => 2), array('Rate' => 100, 'Weather' => 1)),
+    'Amaurot - Fading Footsteps' => array(array('Rate' => 100, 'Weather' => 120)),
     'The Crown of the Immaculate' => array(array('Rate' => 100, 'Weather' => 118)),
     'Lyhe Mheg' => array(array('Rate' => 100, 'Weather' => 4)),
     'The Firmament' => array(array('Rate' => 60, 'Weather' => 15), array('Rate' => 70, 'Weather' => 2), array('Rate' => 75, 'Weather' => 1), array('Rate' => 90, 'Weather' => 3), array('Rate' => 100, 'Weather' => 4)),
+    'The Heroes\' Gauntlet - Amh Araeng' => array(array('Rate' => 100, 'Weather' => 137)),
     'Bozjan Southern Front' => array(array('Rate' => 52, 'Weather' => 2), array('Rate' => 64, 'Weather' => 7), array('Rate' => 76, 'Weather' => 5), array('Rate' => 88, 'Weather' => 9), array('Rate' => 100, 'Weather' => 11)));
 
 ?>
