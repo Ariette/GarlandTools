@@ -28,6 +28,8 @@ namespace Garland.Data.Modules
                 var args = line.Skip(2).Where(c => c != "").ToArray();
                 var itemName = line[0];
 
+                if (itemName.StartsWith("#")) continue;
+
                 try
                 {
                     var item = _builder.Db.ItemsByName.ContainsKey(itemName) ? _builder.Db.ItemsByName[itemName] : _builder.Db.ItemsByName[itemName + " "]; // Some item names in database are not trimmed...
@@ -117,9 +119,10 @@ namespace Garland.Data.Modules
                 {
                     var seedItem = _builder.Db.ItemsByName[seedItemName];
                     Items.AddGardeningPlant(_builder, seedItem, item);
-                } catch(Exception ex)
+                }
+                catch (Exception ex)
                 {
-                    DatabaseBuilder.PrintLine($"Error importing supplemental source Gardening '{seedItemName}' of '{item.name}' : {ex.Message}");
+                    DatabaseBuilder.PrintLine($"Error importing supplemental source Gardening '{seedItemName}' of '{item.en.name}' : {ex.Message}");
                 }
             }
         }
@@ -142,9 +145,9 @@ namespace Garland.Data.Modules
                     desynthItem.desynthedTo.Add((int)item.id);
                     _builder.Db.AddReference(desynthItem, "item", (int)item.id, false);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
-                    DatabaseBuilder.PrintLine($"Error importing supplemental source Desynth '{itemName}' of '{item.name}' : {ex.Message}");
+                    DatabaseBuilder.PrintLine($"Error importing supplemental source Desynth '{itemName}' of '{item.en.name}' : {ex.Message}");
                 }
             }
         }
@@ -166,10 +169,10 @@ namespace Garland.Data.Modules
                         mob.drops = new JArray();
                     mob.drops.Add((int)item.id);
                     _builder.Db.AddReference(mob, "item", (int)item.id, false);
-                } 
+                }
                 catch (Exception ex)
                 {
-                    DatabaseBuilder.PrintLine($"Error importing supplemental source Mob '{mobName}' of '{item.name}' : {ex.Message}");
+                    DatabaseBuilder.PrintLine($"Error importing supplemental source Mob '{mobName}' of '{item.en.name}' : {ex.Message}");
                 }
             }
         }
@@ -192,9 +195,9 @@ namespace Garland.Data.Modules
                     acquireItem.acquire.Add((int)item.id);
                     _builder.Db.AddReference(acquireItem, "item", (int)item.id, false);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
-                    DatabaseBuilder.PrintLine($"Error importing supplemental source Acquire '{itemName}' of '{item.name}' : {ex.Message}");
+                    DatabaseBuilder.PrintLine($"Error importing supplemental source Acquire '{itemName}' of '{item.en.name}' : {ex.Message}");
                 }
             }
         }
@@ -245,9 +248,9 @@ namespace Garland.Data.Modules
                         }
                     }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
-                    DatabaseBuilder.PrintLine($"Error importing supplemental source Reduce '{sourceItemName}' of '{item.name}' : {ex.Message}");
+                    DatabaseBuilder.PrintLine($"Error importing supplemental source Reduce '{sourceItemName}' of '{item.en.name}' : {ex.Message}");
                 }
             }
         }
@@ -360,7 +363,7 @@ namespace Garland.Data.Modules
                 }
                 catch (Exception ex)
                 {
-                    DatabaseBuilder.PrintLine($"Error importing supplemental source Reduce '{name}' of '{item.name}' : {ex.Message}");
+                    DatabaseBuilder.PrintLine($"Error importing supplemental source Reduce '{name}' of '{item.en.name}' : {ex.Message}");
                 }
             }
         }
